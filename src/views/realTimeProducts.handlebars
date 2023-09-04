@@ -17,10 +17,16 @@
 
 <button id="botonProductos">Mostrar Productos</button>
 
+<form>
+  <label for="id"> Nombre</label>
+   <input type="number" required name="id">
+   <button id="botonEliminar"> Eliminar</button>
+</form>
+
 
 <div id="prods-container">
   <ul>
-    {{#each prods}}
+    {{#each product}}
       <li>{{this}}</li>
     {{/each}}
   </ul>

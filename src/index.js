@@ -5,6 +5,7 @@ import path from 'path';
 import cartRouter from "./routes/carts.routes.js";
 import { Server } from "socket.io";
 import { engine } from 'express-handlebars';
+import ProductManager from "./services/ProductoManager.js";
 
 const app = express()
 const PORT =8080
@@ -27,7 +28,7 @@ app.use('/static', express.static(path.join(__dirname, '/public')))
 
 app.use('/static',express.static(path.join(__dirname, '/public')))
 
-
+const productManager = new ProductManager
 const io = new Server (serverExpress)
 const prods = []
 io.on('connection', (socket) => {
@@ -42,8 +43,29 @@ io.on('connection', (socket) => {
 
     socket.on('nuevoProducto', (nuevoProd) => {
         prods.push(nuevoProd)
+        productManager.addProduct(nuevoProd)
+        productManager.getProducts()
         socket.emit('prods', prods)
         console.log(prods)
+
+        
+    })
+
+    socket.on ('borrarProducto', async ()=>{
+        const prod = await productManager.getProductsById();
+        productManager.deleteProduct(prod)
+        
+    })
+
+    socket.on('actualizarLista', async ()=>{
+        try {
+            const products = await productManager.getProducts();
+            const prods = products
+       
+        socket.emit('prods', prods);
+        }catch (error){
+            console.error ('Error al actualizar')
+        }
     })
 
 
