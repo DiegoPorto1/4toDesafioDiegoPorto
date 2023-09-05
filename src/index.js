@@ -41,11 +41,11 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('nuevoProducto', (nuevoProd) => {
-        prods.push(nuevoProd)
-        productManager.addProduct(nuevoProd)
-        productManager.getProducts()
-        socket.emit('prods', prods)
+    socket.on('nuevoProducto', async (nuevoProd) => {
+        
+        await productManager.addProduct(nuevoProd)
+        const products = await productManager.getProducts()
+        socket.emit('prods', products)
         console.log(prods)
 
         
@@ -60,9 +60,9 @@ io.on('connection', (socket) => {
     socket.on('actualizarLista', async ()=>{
         try {
             const products = await productManager.getProducts();
-            const prods = products
+          
        
-        socket.emit('prods', prods);
+        socket.emit('prods', products);
         }catch (error){
             console.error ('Error al actualizar')
         }
